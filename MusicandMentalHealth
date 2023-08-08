@@ -1,0 +1,76 @@
+-- Select all
+-- Selct Age, Hours per day, fav genre, foreign langauge, anxiety, depression, insomnia, ocd, music_effects. Then order by age from young to least 
+
+SELECT *
+FROM Music.Health
+
+SELECT age, Hours_per_day, fav_genre, Foreign_languages, anxiety, depression, insomnia, ocd, music_effects
+FROM Music.Health
+ORDER BY age ASC 
+
+-- Question 1- Do older or younger individuals report different levels of anxiety, depression, insomnia, or OCD? (AGE)
+-- Group columns, average age and the other average scores for anxiety, depression, ocd, insomnia, and the overall music_effects result for that age group
+
+SELECT age, ROUND(AVG(anxiety)) AS avg_anxiety, ROUND(AVG(Depression)) AS avg_depression, ROUND(AVG(OCD)) AS avg_ocd, ROUND(AVG(Insomnia)) AS avg_insomnia
+FROM Music.Health
+WHERE age >= 10
+GROUP BY age
+ORDER BY age;
+
+-- Question 2- Is there any correlation between the number of hours spent listening to music while working and mental health indicators? (Hours a day while working)
+-- select the distinct age, average hours per day for that age, and see how they correlate with mental health scores
+
+SELECT age, ROUND(AVG(hours_per_day)) AS avg_hours_per_day, ROUND(AVG(anxiety)) AS avg_anxiety, ROUND(AVG(Depression)) AS avg_depression, ROUND(AVG(OCD)) AS avg_ocd, ROUND(AVG(Insomnia)) AS avg_insomnia
+FROM Music.Health
+WHERE age >= 10
+GROUP BY age
+ORDER BY age;
+
+-- Question 3-Are individuals who play musical instruments or compose music more likely to have better mental health scores? (insturment/composer)
+-- figure out how do instrumentalists/composers score on mental health scores.
+
+SELECT age,
+  ROUND(AVG(anxiety)) AS avg_anxiety,
+  ROUND(AVG(Depression)) AS avg_depression,
+  ROUND(AVG(OCD)) AS avg_ocd,
+  ROUND(AVG(Insomnia)) AS avg_insomnia,
+  CAST(composer AS BOOLEAN) AS composer,
+  CAST(Instrumentalist AS BOOLEAN) AS instrumentalist
+FROM Music.Health
+GROUP BY age, composer, Instrumentalist
+ORDER BY age;
+
+
+-- Question 4- Is there a correlation between respondents' favorite music genre and their reported mental health scores? (Fav_genre)
+-- figure out if distinct fav_genre types result in a correlation in scores.
+
+SELECT Fav_genre, ROUND(AVG(anxiety)) AS avg_anxiety, ROUND(AVG(Depression)) AS avg_depression, ROUND(AVG(OCD)) AS avg_ocd, ROUND(AVG(Insomnia)) AS avg_insomnia
+FROM Music.Health
+WHERE age >= 10
+GROUP BY Fav_genre
+ORDER BY Fav_genre;
+
+-- Question 5-Do individuals who enjoy exploring different music genres or listening to foreign language music have different mental health scores? (Exploratory)
+-- does exploratory or foreign langauges influence scores? 
+-- and remove nulls from languages
+
+SELECT Exploratory, ROUND(AVG(anxiety)) AS avg_anxiety, ROUND(AVG(Depression)) AS avg_depression, ROUND(AVG(OCD)) AS avg_ocd, ROUND(AVG(Insomnia)) AS avg_insomnia
+FROM Music.Health
+WHERE age >= 10
+GROUP BY Exploratory
+ORDER BY Exploratory;
+
+SELECT foreign_languages, ROUND(AVG(anxiety)) AS avg_anxiety, ROUND(AVG(Depression)) AS avg_depression, ROUND(AVG(OCD)) AS avg_ocd, ROUND(AVG(Insomnia)) AS avg_insomnia
+FROM Music.Health
+WHERE age >= 10 AND Foreign_languages IS NOT NULL 
+GROUP BY Foreign_languages
+ORDER BY Foreign_languages;
+
+-- Question 6- Do individuals who believe that music has a positive impact on their mental health exhibit different mental health scores compared to those who do not? (Music Effects)
+-- Find the Music_effects and find if they result in lower or higher scores.
+
+SELECT Music_effects, ROUND(AVG(anxiety)) AS avg_anxiety, ROUND(AVG(Depression)) AS avg_depression, ROUND(AVG(OCD)) AS avg_ocd, ROUND(AVG(Insomnia)) AS avg_insomnia
+FROM Music.Health
+WHERE age >= 10 AND Music_effects IS NOT NULL 
+GROUP BY Music_effects
+ORDER BY Music_effects;
